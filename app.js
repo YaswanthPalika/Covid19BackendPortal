@@ -72,6 +72,21 @@ function authenticateToken(request, response, next) {
   }
 }
 
+app.get("/", authenticateToken, async (request, response) => {
+  const getStatesQuery = `
+    SELECT
+      *
+    FROM
+      state;`;
+  const statesArray = await database.all(getStatesQuery);
+  response.send(
+    statesArray.map((eachState) =>
+      convertStateDbObjectToResponseObject(eachState)
+    )
+  );
+});
+  
+
 app.post("/login/", async (request, response) => {
   const { username, password } = request.body;
   const selectUserQuery = `SELECT * FROM user WHERE username = '${username}';`;
